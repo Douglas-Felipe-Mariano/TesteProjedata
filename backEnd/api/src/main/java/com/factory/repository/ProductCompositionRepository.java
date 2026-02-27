@@ -14,7 +14,8 @@ import com.factory.model.ProductCompositionId;
 @Repository
 public interface ProductCompositionRepository extends JpaRepository<ProductComposition, ProductCompositionId> {
     
-    List<ProductComposition> findByProdId(Integer prodtId);
+    @Query("SELECT pc FROM ProductComposition pc WHERE pc.product.prodId = :prodId")
+    List<ProductComposition> findByProdId(@Param("prodId") Integer prodtId);
 
 
     @Query("SELECT pc FROM ProductComposition pc " +
