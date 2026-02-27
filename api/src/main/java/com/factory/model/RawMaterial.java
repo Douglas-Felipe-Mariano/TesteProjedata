@@ -15,9 +15,9 @@ import jakarta.persistence.Table;
 @Table(name = "raw_material")
 public class RawMaterial {
 
-    @Column(name = "mat_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "mat_id")
     private Integer matId;
 
     @Column(name = "mat_name", length = 100, nullable = false)
@@ -26,7 +26,7 @@ public class RawMaterial {
     @Column(name = "mat_quantity", precision = 10, scale = 2, nullable = false)
     private BigDecimal matQuantity;
 
-    @JoinColumn(name = "mat_unit_id", nullable = false)
+    @JoinColumn(name = "unit_id", nullable = false)
     @ManyToOne
     private UnitMeasure matUnit;
 

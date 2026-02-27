@@ -1,5 +1,8 @@
 package com.factory.mapper;
 
+import java.util.Collections;
+import java.util.stream.Collectors;
+
 import com.factory.dto.request.ProductRequestDTO;
 import com.factory.dto.response.ProductResponseDTO;
 import com.factory.model.Product;
@@ -7,20 +10,24 @@ import com.factory.model.Product;
 public class ProductMapper {
 
     
-    public static ProductResponseDTO toDTO(Product product) {
+    public static ProductResponseDTO toDTO(Product entity) {
         return new ProductResponseDTO(
-            product.getProdId(),
-            product.getProdName(),
-            product.getProdPrice(),
-            product.getProdDescription()
+            entity.getProdId(),
+            entity.getProdName(),
+            entity.getProdPrice(),
+            entity.getProdDescription(),
+            entity.getCompositions() != null ? 
+                entity.getCompositions().stream()
+                      .map(ProductCompositionMapper::toDTO)
+                      .collect(Collectors.toList()) : Collections.emptyList()
         );
     }
     
     public static Product toEntity(ProductRequestDTO dto) {
-        Product product = new Product();
-        product.setProdName(dto.prodName());
-        product.setProdPrice(dto.prodPrice());
-        product.setProdDescription(dto.prodDescription());
-        return product;
+        Product entity = new Product();
+        entity.setProdName(dto.prodName());
+        entity.setProdPrice(dto.prodPrice());
+        entity.setProdDescription(dto.prodDescription());
+        return entity;
     }
 }

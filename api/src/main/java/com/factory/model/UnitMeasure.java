@@ -11,9 +11,9 @@ import jakarta.persistence.Table;
 @Table(name = "unit_of_measure")
 public class UnitMeasure {
 
-    @Column(name = "unit_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "unit_id")
     private Integer unitId;
 
     @Column(name = "unit_name", length = 50, nullable = false)

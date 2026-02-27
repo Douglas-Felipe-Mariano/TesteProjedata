@@ -1,5 +1,6 @@
 package com.factory.mapper;
 
+import com.factory.dto.request.RawMaterialRequestDTO;
 import com.factory.dto.response.RawMaterialResponseDTO;
 import com.factory.model.RawMaterial;
 import com.factory.model.UnitMeasure;
@@ -17,7 +18,7 @@ public class RawMaterialMapper {
         );
     }
 
-    public static RawMaterial toEntity(RawMaterialResponseDTO dto, UnitMeasure unit) {
+    public static RawMaterial toEntity(RawMaterialRequestDTO dto, UnitMeasure unit) {
         RawMaterial entity = new RawMaterial();
         entity.setMatName(dto.matName());
         entity.setMatQuantity(dto.matQuantity());

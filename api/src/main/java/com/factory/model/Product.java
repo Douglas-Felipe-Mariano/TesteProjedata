@@ -16,9 +16,9 @@ import jakarta.persistence.Table;
 @Table(name = "product")
 public class Product {
 
+    @Id
     @Column(name = "prod_id")
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-    @Id
     private Integer prodId;
 
     @Column(name = "prod_name", length = 255, nullable = false)
@@ -77,5 +77,15 @@ public class Product {
     public void setProdDescription(String prodDescription) {
         this.prodDescription = prodDescription;
     }
+
+
+    public List<ProductComposition> getCompositions() {
+        return this.compositions;
+    }
+
+    public void setCompositions(List<ProductComposition> compositions) {
+        this.compositions = compositions;
+    }
+
 
 }

@@ -11,6 +11,7 @@ import com.factory.dto.response.UnitMeasureResponseDTO;
 import com.factory.mapper.UnitMeasureMapper;
 import com.factory.model.UnitMeasure;
 import com.factory.repository.UnitMeasureRepository;
+import com.factory.services.exceptions.EntityNotFoundException;
 
 @Service
 public class UnitMeasureService {
@@ -39,30 +40,30 @@ public class UnitMeasureService {
     @Transactional(readOnly = true)
     public UnitMeasureResponseDTO findById(Integer id) {
         UnitMeasure entity = unitMeasureRepository.findById(id)
-                                                 .orElseThrow(() -> new RuntimeException("Unit of Measure not found with id: " + id));
+                                                 .orElseThrow(() -> new EntityNotFoundException("Unit of Measure not found with id: " + id));
         return UnitMeasureMapper.toDTO(entity);
     }
 
     @Transactional
     public UnitMeasureResponseDTO update(Integer id, UnitMeasureRequestDTO dto) {
-        UnitMeasure entity = unitMeasureRepository.findById(id)
-                                                 .orElseThrow(() -> new RuntimeException("Unit of Measure not found with id: " + id));
+        UnitMeasure unit = unitMeasureRepository.findById(id)
+                                                 .orElseThrow(() -> new EntityNotFoundException("Unit of Measure not found with id: " + id));
         
         //Validation, update only fields that are not null in the DTO request                                         
         if (dto.unitName() != null) {
-            entity.setUnitName(dto.unitName());
+            unit.setUnitName(dto.unitName());
         }                    
         if (dto.unitSymbol() != null) {
-             entity.setUnitSymbol(dto.unitSymbol());
+             unit.setUnitSymbol(dto.unitSymbol());
         }
         
-        return UnitMeasureMapper.toDTO(entity);
+        return UnitMeasureMapper.toDTO(unitMeasureRepository.save(unit));
     }
 
      @Transactional
      public void delete(Integer id) {
          UnitMeasure entity = unitMeasureRepository.findById(id)
-                                                   .orElseThrow(() -> new RuntimeException("Unit of Measure not found with id: " + id));
+                                                   .orElseThrow(() -> new EntityNotFoundException("Unit of Measure not found with id: " + id));
                                                    
          unitMeasureRepository.delete(entity);
      }

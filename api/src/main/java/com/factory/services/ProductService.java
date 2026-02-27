@@ -11,6 +11,7 @@ import com.factory.dto.response.ProductResponseDTO;
 import com.factory.mapper.ProductMapper;
 import com.factory.model.Product;
 import com.factory.repository.ProductRepository;
+import com.factory.services.exceptions.EntityNotFoundException;
 
 
 
@@ -45,10 +46,20 @@ public class ProductService {
         return ProductMapper.toDTO(product);
     }
 
+    @Transactional(readOnly = true)
+    public List<ProductResponseDTO> findByName(String prodName){
+        Product product = productRepository.findByProdName(prodName);
+
+        if (product == null) {
+            throw new EntityNotFoundException("Product not found with name: " + prodName);
+        }
+        return List.of(ProductMapper.toDTO(product));
+    }                                
+
      @Transactional
      public ProductResponseDTO update(Integer id, ProductRequestDTO dto){
         Product product = productRepository.findById(id)
-                                           .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
+                                           .orElseThrow(() -> new EntityNotFoundException("Product not found with id: " + id));
         
         //Validation, update only fields that are not null in the DTO request                                         
         if (dto.prodName() != null) {
@@ -61,13 +72,13 @@ public class ProductService {
              product.setProdDescription(dto.prodDescription());
         }
 
-        return ProductMapper.toDTO(product);
+        return ProductMapper.toDTO(productRepository.save(product));
      }
 
      @Transactional
      public void delete(Integer id){
         Product product = productRepository.findById(id)
-                                           .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
+                                           .orElseThrow(() -> new EntityNotFoundException("Product not found with id: " + id));
         productRepository.delete(product);
      }
 }

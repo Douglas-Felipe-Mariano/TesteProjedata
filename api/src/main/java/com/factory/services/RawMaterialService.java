@@ -13,6 +13,7 @@ import com.factory.model.RawMaterial;
 import com.factory.model.UnitMeasure;
 import com.factory.repository.RawMaterialRepository;
 import com.factory.repository.UnitMeasureRepository;
+import com.factory.services.exceptions.EntityNotFoundException;
 
 @Service
 public class RawMaterialService {
@@ -20,7 +21,10 @@ public class RawMaterialService {
     private final RawMaterialRepository rawMaterialRepository;
     private final UnitMeasureRepository unitMeasureRepository;
 
-    public RawMaterialService(RawMaterialRepository rawMaterialRepository, UnitMeasureRepository unitMeasureRepository) {
+    public RawMaterialService(RawMaterialRepository rawMaterialRepository, 
+                              UnitMeasureRepository unitMeasureRepository
+                            )
+    {
         this.rawMaterialRepository = rawMaterialRepository;
         this.unitMeasureRepository = unitMeasureRepository;
     }
@@ -29,7 +33,7 @@ public class RawMaterialService {
     public RawMaterialResponseDTO create(RawMaterialRequestDTO dto) {
         //Validation, check if the unit of measure with the given id exists in the database before creating the entity
         UnitMeasure unit = unitMeasureRepository.findById(dto.unitId())
-                                             .orElseThrow(() -> new RuntimeException("Unit of Measure not found with id: " + dto.unitId()));
+                                             .orElseThrow(() -> new EntityNotFoundException("Unit of Measure not found with id: " + dto.unitId()));
 
         RawMaterial material = RawMaterialMapper.toEntity(dto, unit);
 
@@ -47,40 +51,48 @@ public class RawMaterialService {
     @Transactional(readOnly = true)
     public RawMaterialResponseDTO findById(Integer id) {
         RawMaterial entity = rawMaterialRepository.findById(id)
-                                                  .orElseThrow(() -> new RuntimeException("Raw Material not found with id: " + id));
+                                                  .orElseThrow(() -> new EntityNotFoundException("Raw Material not found with id: " + id));
 
         return RawMaterialMapper.toDTO(entity);
+    }
+
+    @Transactional(readOnly = true)
+    public List<RawMaterialResponseDTO> findByName(String matName) {
+        RawMaterial material = rawMaterialRepository.findByMatName(matName);
+
+        if (material == null) {
+            throw new EntityNotFoundException("Raw Material not found with name: " + matName);
+        }
+        return List.of(RawMaterialMapper.toDTO(material));
     }
 
      @Transactional
      public RawMaterialResponseDTO update(Integer id, RawMaterialRequestDTO dto) {
         //Validation, check if the raw material with the given id exists in the database before updating the entity
-        RawMaterial entity = rawMaterialRepository.findById(id)
-                                                  .orElseThrow(() -> new RuntimeException("Raw Material not found with id: " + id));
+        RawMaterial material = rawMaterialRepository.findById(id)
+                                                  .orElseThrow(() -> new EntityNotFoundException("Raw Material not found with id: " + id));
         
         //Validation, update only fields that are not null in the DTO request                                         
         if (dto.matName() != null) {
-            entity.setMatName(dto.matName());
+            material.setMatName(dto.matName());
         }                    
         if (dto.matQuantity() != null) {
-              entity.setMatQuantity(dto.matQuantity());
+              material.setMatQuantity(dto.matQuantity());
         }
         if (dto.unitId() != null) {
             //Validation, check if the unit of measure with the given id exists in the database before updating the entity
             UnitMeasure unit = unitMeasureRepository.findById(dto.unitId())
-                                                 .orElseThrow(() -> new RuntimeException("Unit of Measure not found with id: " + dto.unitId()));
-            entity.setMatUnit(unit);
+                                                 .orElseThrow(() -> new EntityNotFoundException("Unit of Measure not found with id: " + dto.unitId()));
+            material.setMatUnit(unit);
         }
-        
-        RawMaterial updatedMaterial = rawMaterialRepository.save(entity);
 
-        return RawMaterialMapper.toDTO(updatedMaterial);
+        return RawMaterialMapper.toDTO(rawMaterialRepository.save(material));
     }
 
       @Transactional
       public void delete(Integer id) {
         RawMaterial entity = rawMaterialRepository.findById(id)
-                                                    .orElseThrow(() -> new RuntimeException("Raw Material not found with id: " + id)); 
+                                                    .orElseThrow(() -> new EntityNotFoundException("Raw Material not found with id: " + id)); 
 
         rawMaterialRepository.delete(entity);                                                    
       }

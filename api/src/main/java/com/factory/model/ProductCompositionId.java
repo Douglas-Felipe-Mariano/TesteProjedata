@@ -21,19 +21,19 @@ public class ProductCompositionId implements Serializable {
         this.matId = matId;
     }
 
-    public Integer getprodId() {
+    public Integer getProdId() {
         return this.prodId;
     }
 
-    public void setprodId(Integer prodId) {
+    public void setProdId(Integer prodId) {
         this.prodId = prodId;
     }
 
-    public Integer getmatId() {
+    public Integer getMatId() {
         return this.matId;
     }
 
-    public void setmatId(Integer matId) {
+    public void setMatId(Integer matId) {
         this.matId = matId;
     }
 
