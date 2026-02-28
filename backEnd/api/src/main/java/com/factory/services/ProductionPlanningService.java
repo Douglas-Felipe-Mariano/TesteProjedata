@@ -39,27 +39,28 @@ public class ProductionPlanningService {
     @Transactional(readOnly = true)
     public ProductionSuggestionResponseDTO suggestProduction() {
 
-        List<Product> products = productRepository.findAll();
+        // Create a mutable copy of the products list for sorting
+        List<Product> products = new ArrayList<>(productRepository.findAll());
 
         List<RawMaterial> rawMaterials = rawMaterialRepository.findAll();
 
         List<ProductComposition> allcompositions = productCompositionRepository.findByProductInWithMaterial(products);
 
-        //stock cache
+        // Stock cache: maps material ID to available quantity
         Map<Integer, BigDecimal> availableStock = rawMaterials.stream()
                                                               .collect(Collectors.toMap(
                                                                RawMaterial::getMatId,
                                                                RawMaterial::getMatQuantity
                                                             ));
 
-        // Group compositions by product
+        // Group compositions by product ID for efficient lookup
         Map<Integer, List<ProductComposition>> compositionsByProduct = allcompositions.stream()
                                                                                    .collect(Collectors.groupingBy(
                                                                                     pc -> pc.getProduct().getProdId()
                                                                                 ));
                                                             
-        //Sort by higesst revenue price first 
-       products.sort(Comparator.comparing(Product::getProdPrice).reversed());                                                                
+        // Sort products by highest price first (greedy algorithm for max revenue)
+        products.sort(Comparator.comparing(Product::getProdPrice).reversed());                                                                
 
         List<ProductionSuggestionItemDTO> result = new ArrayList<>();
         BigDecimal totalRevenue = BigDecimal.ZERO;

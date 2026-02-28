@@ -15,6 +15,10 @@ import com.factory.repository.RawMaterialRepository;
 import com.factory.repository.UnitMeasureRepository;
 import com.factory.services.exceptions.EntityNotFoundException;
 
+/**
+ * Business service layer for Raw Material operations.
+ * Handles inventory management and unit association logic.
+ */
 @Service
 public class RawMaterialService {
 
@@ -22,24 +26,28 @@ public class RawMaterialService {
     private final UnitMeasureRepository unitMeasureRepository;
 
     public RawMaterialService(RawMaterialRepository rawMaterialRepository, 
-                              UnitMeasureRepository unitMeasureRepository
-                            )
+                              UnitMeasureRepository unitMeasureRepository)
     {
         this.rawMaterialRepository = rawMaterialRepository;
         this.unitMeasureRepository = unitMeasureRepository;
     }
 
+    // Creates a new raw material with unit association
     @Transactional
     public RawMaterialResponseDTO create(RawMaterialRequestDTO dto) {
-        //Validation, check if the unit of measure with the given id exists in the database before creating the entity
+        RawMaterial material = new RawMaterial();
+        material.setMatName(dto.matName());
+        material.setMatQuantity(dto.matQuantity());
+        
+        // Fetches and validates the associated unit of measure
         UnitMeasure unit = unitMeasureRepository.findById(dto.unitId())
                                              .orElseThrow(() -> new EntityNotFoundException("Unit of Measure not found with id: " + dto.unitId()));
-
-        RawMaterial material = RawMaterialMapper.toEntity(dto, unit);
+        material.setMatUnit(unit);
 
         return RawMaterialMapper.toDTO(rawMaterialRepository.save(material));
     }
 
+    // Retrieves all raw materials
     @Transactional(readOnly = true)
     public List<RawMaterialResponseDTO> findAll() {
         return rawMaterialRepository.findAll()
@@ -48,6 +56,7 @@ public class RawMaterialService {
                                    .collect(Collectors.toList());
     }
 
+    // Finds raw material by ID or throws exception
     @Transactional(readOnly = true)
     public RawMaterialResponseDTO findById(Integer id) {
         RawMaterial entity = rawMaterialRepository.findById(id)
@@ -75,7 +84,7 @@ public class RawMaterialService {
         //Validation, update only fields that are not null in the DTO request                                         
         if (dto.matName() != null) {
             material.setMatName(dto.matName());
-        }                    
+        }
         if (dto.matQuantity() != null) {
               material.setMatQuantity(dto.matQuantity());
         }

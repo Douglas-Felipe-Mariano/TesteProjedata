@@ -13,6 +13,10 @@ import com.factory.model.UnitMeasure;
 import com.factory.repository.UnitMeasureRepository;
 import com.factory.services.exceptions.EntityNotFoundException;
 
+/**
+ * Business service layer for Unit of Measure operations.
+ * Handles CRUD operations and validation logic.
+ */
 @Service
 public class UnitMeasureService {
 
@@ -22,6 +26,7 @@ public class UnitMeasureService {
         this.unitMeasureRepository = unitMeasureRepository;
     }
 
+    // Creates a new unit of measure
     @Transactional
     public UnitMeasureResponseDTO create(UnitMeasureRequestDTO dto) {
         UnitMeasure unit = UnitMeasureMapper.toEntity(dto);
@@ -29,6 +34,7 @@ public class UnitMeasureService {
         return UnitMeasureMapper.toDTO(unitMeasureRepository.save(unit));
     }
 
+    // Retrieves all units of measure
     @Transactional(readOnly = true)
     public List<UnitMeasureResponseDTO> findAll() {
         return unitMeasureRepository.findAll()
@@ -37,6 +43,7 @@ public class UnitMeasureService {
                                     .collect(Collectors.toList());
     }
 
+    // Finds unit by ID or throws exception
     @Transactional(readOnly = true)
     public UnitMeasureResponseDTO findById(Integer id) {
         UnitMeasure entity = unitMeasureRepository.findById(id)
@@ -44,12 +51,13 @@ public class UnitMeasureService {
         return UnitMeasureMapper.toDTO(entity);
     }
 
+    // Updates only non-null fields (partial update pattern)
     @Transactional
     public UnitMeasureResponseDTO update(Integer id, UnitMeasureRequestDTO dto) {
         UnitMeasure unit = unitMeasureRepository.findById(id)
                                                  .orElseThrow(() -> new EntityNotFoundException("Unit of Measure not found with id: " + id));
         
-        //Validation, update only fields that are not null in the DTO request                                         
+        // Validation: update only fields that are not null in the DTO request                                         
         if (dto.unitName() != null) {
             unit.setUnitName(dto.unitName());
         }                    

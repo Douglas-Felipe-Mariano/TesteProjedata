@@ -27,16 +27,16 @@ class ProductCompositionServiceTest {
     @Test
     @DisplayName("A BusinessRuleException must be thrown if the composition already exists.")
     void shouldThrowExceptionWhenCompositionAlreadyExists() {
-        // Arrange
+       
         Integer prodId = 1;
         Integer matId = 1;
         ProductCompositionId id = new ProductCompositionId(prodId, matId);
         
         when(repository.existsById(id)).thenReturn(true);
 
-        // Act & Assert (Faltou chamar o service aqui)
+        
         assertThrows(BusinessRuleException.class, () -> {
-            // Passamos null no DTO pois a exceção deve estourar antes de usá-lo
+           
             service.create(new com.factory.dto.request.ProductCompositionRequestDTO(prodId, matId, java.math.BigDecimal.ONE));
         });
     }

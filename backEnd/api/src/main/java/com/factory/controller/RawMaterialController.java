@@ -15,8 +15,10 @@ import com.factory.dto.request.RawMaterialRequestDTO;
 import com.factory.dto.response.RawMaterialResponseDTO;
 import com.factory.services.RawMaterialService;
 
-
-
+/**
+ * Controller REST para gerenciamento de matérias-primas.
+ * Expõe endpoints CRUD para operações com materiais.
+ */
 @RestController
 @RequestMapping("/api/raw-materials")
 public class RawMaterialController {
@@ -28,7 +30,7 @@ public class RawMaterialController {
     }
 
     @PostMapping
-    public ResponseEntity<RawMaterialResponseDTO> create(RawMaterialRequestDTO dto) {
+    public ResponseEntity<RawMaterialResponseDTO> create(@RequestBody RawMaterialRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(rawMaterialService.create(dto));
     }
 

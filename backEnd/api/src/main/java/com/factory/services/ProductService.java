@@ -13,8 +13,10 @@ import com.factory.model.Product;
 import com.factory.repository.ProductRepository;
 import com.factory.services.exceptions.EntityNotFoundException;
 
-
-
+/**
+ * Business service layer for Product operations.
+ * Handles validation rules and data persistence logic.
+ */
 @Service
 public class ProductService {
 
@@ -24,13 +26,14 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
+    // Creates a new product and returns the response DTO
     @Transactional
     public ProductResponseDTO create(ProductRequestDTO dto){
         Product product = ProductMapper.toEntity(dto);
-        
         return ProductMapper.toDTO(productRepository.save(product));
     }
 
+    // Retrieves all products from database
     @Transactional(readOnly = true)
     public List<ProductResponseDTO> findAll(){
         return productRepository.findAll()
@@ -39,6 +42,7 @@ public class ProductService {
                                 .collect(Collectors.toList());
     }
 
+    // Finds product by ID or throws exception if not found
     @Transactional(readOnly = true)
     public ProductResponseDTO findById(Integer id){
         Product product = productRepository.findById(id)
@@ -46,6 +50,7 @@ public class ProductService {
         return ProductMapper.toDTO(product);
     }
 
+    // Searches products by name
     @Transactional(readOnly = true)
     public List<ProductResponseDTO> findByName(String prodName){
         Product product = productRepository.findByProdName(prodName);
@@ -56,12 +61,12 @@ public class ProductService {
         return List.of(ProductMapper.toDTO(product));
     }                                
 
-     @Transactional
-     public ProductResponseDTO update(Integer id, ProductRequestDTO dto){
+    // Updates only non-null fields from DTO (partial update pattern)
+    @Transactional
+    public ProductResponseDTO update(Integer id, ProductRequestDTO dto){
         Product product = productRepository.findById(id)
                                            .orElseThrow(() -> new EntityNotFoundException("Product not found with id: " + id));
         
-        //Validation, update only fields that are not null in the DTO request                                         
         if (dto.prodName() != null) {
             product.setProdName(dto.prodName());
         }                    
@@ -73,12 +78,13 @@ public class ProductService {
         }
 
         return ProductMapper.toDTO(productRepository.save(product));
-     }
+    }
 
-     @Transactional
-     public void delete(Integer id){
+    // Remove produto do banco de dados
+    @Transactional
+    public void delete(Integer id){
         Product product = productRepository.findById(id)
                                            .orElseThrow(() -> new EntityNotFoundException("Product not found with id: " + id));
         productRepository.delete(product);
-     }
+    }
 }

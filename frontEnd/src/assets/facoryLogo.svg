@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="500" height="500" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="250" cy="250" r="240" fill="#2c3e50" stroke="#42b983" stroke-width="15"/>
+    
+    <path d="M120 350 L120 230 L200 150 L280 230 L360 150 L360 350 Z" 
+          fill="#42b983" 
+          stroke="white" 
+          stroke-width="10" 
+          stroke-linejoin="round"/>
+    
+    <rect x="300" y="110" width="40" height="60" fill="white" rx="5"/>
+    <circle cx="320" cy="80" r="15" fill="rgba(255,255,255,0.7)"/>
+    <circle cx="340" cy="55" r="10" fill="rgba(255,255,255,0.4)"/>
+    
+    <text x="250" y="440" font-family="Arial, sans-serif" font-size="50" font-weight="bold" fill="white" text-anchor="middle">
+        PROFIT FLOW
+    </text>
+</svg>

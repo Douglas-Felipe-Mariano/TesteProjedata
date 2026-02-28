@@ -10,6 +10,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Controller REST para gerenciamento de unidades de medida.
+ * Expõe endpoints CRUD para operações com unidades.
+ */
 @RestController
 @RequestMapping("/api/unit-measures")
 public class UnitMeasureController {
